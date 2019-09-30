@@ -141,7 +141,7 @@ func main() {
 			imageID := rand.Intn(20)
 			imageUrl := ""
 			if imageID <= 9 {
-				imageUrl = fmt.Sprintf("http://inspection-robot.gribpg.com:9981/cambrian001/static/test%d.png", imageID)
+				imageUrl = fmt.Sprintf("http://inspection-robot.gribgp.com:9981/cambrian001/static/test%d.png", imageID)
 			}
 
 			dataArray[currentIndex] = RealTimeInfo{
