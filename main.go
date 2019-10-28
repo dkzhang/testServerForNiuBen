@@ -20,6 +20,10 @@ type RealTimeInfo struct {
 	ImageUrl     string
 }
 
+type RealTimeRecords struct {
+	Records []RealTimeInfo
+}
+
 var lock sync.Mutex
 
 func main() {
@@ -105,7 +109,8 @@ func main() {
 
 		if inspectionID < roundNumber {
 			//忽视请求轮次，返回当前轮次的所有
-			ctx.JSON(dataArray[:currentIndex+1])
+			ctx.JSON(RealTimeRecords{
+				Records: dataArray[:currentIndex+1]})
 		} else if inspectionID > roundNumber {
 			ctx.Values().Set("error",
 				fmt.Sprintf("The InspectionID requested %d is too large, current InspectionID is %d.",
@@ -120,7 +125,8 @@ func main() {
 				ctx.StatusCode(iris.StatusBadRequest)
 				return
 			} else {
-				ctx.JSON(dataArray[recordID : currentIndex+1])
+				ctx.JSON(RealTimeRecords{
+					Records: dataArray[recordID : currentIndex+1]})
 			}
 
 		}
