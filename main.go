@@ -127,7 +127,7 @@ func main() {
 	})
 
 	app.Handle("GET", "/cambrian001/inspection-log-view/realtime", func(ctx iris.Context) {
-		ctx.View("/web/views/index.html")
+		ctx.View("index.html")
 	})
 
 	//初始化随机数种子
