@@ -77,6 +77,7 @@ func main() {
 	// Resource: http://localhost:8080
 	app.Handle("GET", "/", func(ctx iris.Context) {
 		ctx.HTML("<h1>Welcome</h1>")
+
 	})
 
 	app.Handle("GET", "/cambrian001/inspection-log/realtime", func(ctx iris.Context) {
@@ -123,6 +124,10 @@ func main() {
 			}
 
 		}
+	})
+
+	app.Handle("GET", "/cambrian001/inspection-log-view/realtime", func(ctx iris.Context) {
+		ctx.View("/web/views/index.html")
 	})
 
 	//初始化随机数种子

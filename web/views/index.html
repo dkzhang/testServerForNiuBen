@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--    <script src="jquery/jquery-3.4.1.js"></script>-->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript">
+        var currentInspectionID = 0
+        var currentRecordID = 0
+
+        // var str = '[{' +
+        //     '"InspectionID":100,' +
+        //     '"RecordID":101,' +
+        //     '"Level":"Info",' +
+        //     '"DateTime":"2019-07-16 10:08:19",' +
+        //     '"TextContent":"文字说明是这样这样"' +
+        //     '"ImageUrl":"http://jdslalsdflds.jpg"' +
+        //     '}]';
+        // var strArray = new Array(5)
+        // strArray[0] = '{"Records":[{"InspectionID":100, "RecordID": 101, "Level":"Info", "DateTime":"2019-07-16 10:08:19", "TextContent":"文字说明是这样这样", "ImageUrl":"https://s2.ax1x.com/2019/10/24/KU1FRH.png"}, ' +
+        //                           '{"InspectionID":100, "RecordID": 102, "Level":"Info", "DateTime":"2019-07-16 10:08:19", "TextContent":"文字说明是这样这样", "ImageUrl":"https://s2.ax1x.com/2019/10/24/KU3P00.jpg"} ]}';
+        // strArray[1] = '{"Records":[{"InspectionID":100, "RecordID": 103, "Level":"Info", "DateTime":"2019-07-16 10:08:19", "TextContent":"文字说明是这样这样", "ImageUrl":"https://s2.ax1x.com/2019/10/24/KU1FRH.png"}, ' +
+        //                           '{"InspectionID":100, "RecordID": 104, "Level":"Info", "DateTime":"2019-07-16 10:08:19", "TextContent":"文字说明是这样这样", "ImageUrl":"https://s2.ax1x.com/2019/10/24/KU3P00.jpg"} ]}';
+        // strArray[2] = '{"Records":[{"InspectionID":101, "RecordID": 101, "Level":"Info", "DateTime":"2019-07-16 10:08:19", "TextContent":"文字说明是这样这样", "ImageUrl":"https://s2.ax1x.com/2019/10/24/KU1FRH.png"}, ' +
+        //                           '{"InspectionID":101, "RecordID": 102, "Level":"Info", "DateTime":"2019-07-16 10:08:19", "TextContent":"文字说明是这样这样", "ImageUrl":"https://s2.ax1x.com/2019/10/24/KU3P00.jpg"} ]}';
+        // strArray[3] = '{"Records":[{"InspectionID":101, "RecordID": 103, "Level":"Info", "DateTime":"2019-07-16 10:08:19", "TextContent":"文字说明是这样这样", "ImageUrl":"https://s2.ax1x.com/2019/10/24/KU1FRH.png"}, ' +
+        //                           '{"InspectionID":101, "RecordID": 104, "Level":"Info", "DateTime":"2019-07-16 10:08:19", "TextContent":"文字说明是这样这样", "ImageUrl":"https://s2.ax1x.com/2019/10/24/KU3P00.jpg"} ]}';
+        // strArray[4] = '{"Records":[{"InspectionID":102, "RecordID": 101, "Level":"Info", "DateTime":"2019-07-16 10:08:19", "TextContent":"文字说明是这样这样", "ImageUrl":"https://s2.ax1x.com/2019/10/24/KU1FRH.png"}, ' +
+        //                           '{"InspectionID":102, "RecordID": 102, "Level":"Info", "DateTime":"2019-07-16 10:08:19", "TextContent":"文字说明是这样这样", "ImageUrl":"https://s2.ax1x.com/2019/10/24/KU3P00.jpg"} ]}';
+        //
+        // var x = 0
+
+        $(document).ready(function(){
+            setInterval(function () {
+                //AJAX获取数据
+                $.ajax({
+                    //请求方式
+                    type : "GET",
+                    //请求的媒体类型
+                    contentType: "application/json;charset=UTF-8",
+                    //请求地址
+                    url : "http://inspection-robot.gribgp.com:9981/cambrian001/inspection-log/realtime?inspectionID=" + currentInspectionID + "&recordID=" + currentRecordID,
+                    //数据，json字符串
+                    // data : JSON.stringify(list),
+                    //请求成功
+                    success : function(result) {
+                        console.log(result);
+
+                        //将JSON解析为js对象
+                        const obj = JSON.parse(result);
+
+                        //判断Records的长度
+                        if (obj.Records.length != 0){
+                            //取首元素
+                            let record = obj.Records[0]
+
+                            // 先判断轮次
+                            if (currentInspectionID < record.InspectionID){
+                                //当前轮次太旧，先全部清空
+                                $("#myDiv").empty()
+                                currentInspectionID = record.InspectionID
+                            }
+
+                            //逐条插入记录
+                            for (const r in obj.Records){
+                                let record =  $("<div></div>")
+                                let InspectionID = $("<p></p>").text("巡检ID：" + obj.Records[r].InspectionID);
+                                let RecordID = $("<p></p>").text("记录ID：" + obj.Records[r].RecordID);
+                                let Level = $("<p></p>").text("报警等级：" + obj.Records[r].Level);
+                                let DateTime = $("<p></p>").text("日期时间：" + obj.Records[r].DateTime);
+                                let TextContent = $("<p></p>").text("文本说明：" + obj.Records[r].TextContent);
+                                let ImageUrl = $("<img>").attr("src", obj.Records[r].ImageUrl)
+
+                                record.append(InspectionID)
+                                record.append(RecordID)
+                                record.append(Level)
+                                record.append(DateTime)
+                                record.append(TextContent)
+                                record.append(ImageUrl)
+
+                                $("#myDiv").prepend(record);
+                            }
+                        }
+                    },
+                    //请求失败，包含具体的错误信息
+                    error : function(e){
+                        console.log(e.status);
+                        console.log(e.responseText);
+                    }
+                });
+            }, 5000)
+        });
+    </script>
+
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--    <button id="b01" type="button">改变内容</button>-->
+    <div id="myDiv"><h2>通过 AJAX 改变文本</h2></div>
+
+</body>
+</html>
